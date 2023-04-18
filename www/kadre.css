@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto');
 
 body, p { 
     font-size: 15px; 
@@ -8,6 +8,14 @@ body, p {
 
 td, th { 
     font-size: 11px; }
+
+h1.title { 
+    color: white; 
+}
+p.subtitle { 
+    color: white;
+}
+
 
 h1, h2  { 
     color: #028577; } 

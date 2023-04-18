@@ -1,6 +1,10 @@
 ---
 title: Financial Distress
-date: today
+title-block-banner: '#028577'
+subtitle: The impact of life events and household structures on financial hardship
+date: today 
+date-format: DD MMMM YYYY
+author: Christian Klettner
 execute: 
     echo: false
 ---
