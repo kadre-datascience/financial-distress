@@ -1,11 +1,6 @@
 ---
 title: Financial Distress
-format: 
-    html:
-        toc: true
-        css: www/kadre.css
-        number-sections: true
-        embed-resources: true
+date: today
 execute: 
     echo: false
 ---

@@ -1,0 +1,10 @@
+project:
+  type: website
+  output-dir: docs
+
+toc: true
+number-sections: true
+format: 
+    html:
+        css: www/kadre.css
+        embed-resources: true

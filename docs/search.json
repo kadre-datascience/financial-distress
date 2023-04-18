@@ -1,0 +1,79 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Financial Distress",
+    "section": "",
+    "text": "import {BarChart} from \"@d3/horizontal-bar-chart\"\nimport {LineChart} from \"@d3/multi-line-chart\""
+  },
+  {
+    "objectID": "index.html#indicators-of-financial-stress",
+    "href": "index.html#indicators-of-financial-stress",
+    "title": "Financial Distress",
+    "section": "1.1 Indicators of Financial Stress",
+    "text": "1.1 Indicators of Financial Stress\nFinancial Stress is defined as the difficulty that an individual or household may have in meeting basic financial commitments due to a shortage of money.\nHILDA uses the same definition as the ABS Household Expenditure Survey, which includes survey questions where the household indicates at least two of the following are true:\n\nCould not pay electricity, gas or telephone bills on time\nCould not pay rent or mortgage on time\nAsked for financial help from friends or family\nUnable to heat home\nWent without meals\nPawned or sold something\nAsked for help from welfare/community organisations.\n\n\nhardship = [{type: 'Inability to pay utility bills', value: 0.125},\n            {type: 'Asked for financial help from family', value: 0.121},\n            {type: 'Inability to pay mortgage, rent', value: 0.061},\n            {type:  'Pawned, sold something', value: 0.037},\n            {type:  'Asked for help from welfare organisation', value: 0.035},\n            {type:  'Went without meals', value: 0.031},\n            {type:  'Unable to heat home', value: 0.021}];\nBarChart(hardship, { y: d => d.type,\n                     x: d => d.value, \n                 color: '#028577', \n                   marginLeft: 200 });"
+  },
+  {
+    "objectID": "index.html#persistence-of-financial-stress",
+    "href": "index.html#persistence-of-financial-stress",
+    "title": "Financial Distress",
+    "section": "1.2 Persistence of Financial Stress",
+    "text": "1.2 Persistence of Financial Stress\nThe HILDA survey has been undertaken annually since 2002. Fairly consistent over the course of the survey, financial distress has been included and evidence of persistence from year to year is strong.\n\npersistence = [{\"HouseholdType\":\"Non-elderly couple\",\"InStress\":7.5,\"2001-2004\":48.6,\"2005-2008\":47.1,\"2011-2014\":45.9,\"2015-2018\":51.2},{\"HouseholdType\":\"Couple with dependent children\",\"InStress\":11,\"2001-2004\":55.6,\"2005-2008\":57.9,\"2011-2014\":57,\"2015-2018\":56.2},{\"HouseholdType\":\"Single parent\",\"InStress\":28.5,\"2001-2004\":62.9,\"2005-2008\":66.4,\"2011-2014\":64.2,\"2015-2018\":61.7},{\"HouseholdType\":\"Single non-elderly male\",\"InStress\":16.3,\"2001-2004\":55.7,\"2005-2008\":54.7,\"2011-2014\":53.6,\"2015-2018\":52.6},{\"HouseholdType\":\"Single non-elderly female\",\"InStress\":16.9,\"2001-2004\":58,\"2005-2008\":54.9,\"2011-2014\":55,\"2015-2018\":5.1},{\"HouseholdType\":\"Elderly couple\",\"InStress\":2.7,\"2001-2004\":17.3,\"2005-2008\":27.5,\"2011-2014\":26.8,\"2015-2018\":28.3},{\"HouseholdType\":\"Single elderly male\",\"InStress\":5.4,\"2001-2004\":13.9,\"2005-2008\":25.2,\"2011-2014\":33.6,\"2015-2018\":44.7},{\"HouseholdType\":\"Single elderly female\",\"InStress\":6.5,\"2001-2004\":34.1,\"2005-2008\":42.5,\"2011-2014\":47.5,\"2015-2018\":46.9},{\"HouseholdType\":\"All persons\",\"InStress\":11.9,\"2001-2004\":54.4,\"2005-2008\":55.3,\"2011-2014\":54.2,\"2015-2018\":54.4}]\n\n\n\n\n\n\n\nfunction sparkbar(max) {\n  return x => htl.html`<div style=\"\n    background: #fdc536;\n    width: ${100 * x / max}%;\n    float: right;\n    padding-right: 3px;\n    box-sizing: border-box;\n    overflow: visible;\n    display: flex;\n    justify-content: end;\">${x.toLocaleString(\"en\")}`\n}\n\nInputs.table(persistence, { format: { \n  \"InStress\": \n       sparkbar(d3.max(persistence, d => d['InStress'])),\n    \"2001-2004\": x => d3.format(\".1%\")(x/100), \n   \"2005-2008\": x => d3.format(\".1%\")(x/100), \n   \"2011-2014\": x => d3.format(\".1%\")(x/100), \n   \"2015-2018\": x => d3.format(\".1%\")(x/100) }, \n header: { HouseholdType: \"Household Type\", \n           InStress: \"Proportion in Distress\" }, \n layout: \"auto\"  })"
+  },
+  {
+    "objectID": "index.html#regions",
+    "href": "index.html#regions",
+    "title": "Financial Distress",
+    "section": "2.1 Regions",
+    "text": "2.1 Regions\nGiven the significantly higher housing costs in the major capital cities, financial distress is generally higher in the major urban areas and is lower in regional cities and other areas of Australia.\n\nregions = [{type: \"Major urban\", value: 0}, \n            {type: \"Other urban\", value: -3.21}, \n            {type: \"Other region\", value: -1.73}]\nBarChart(regions, { y: d => d.type,\n                     x: d => d.value, \n                 color: '#028577',  \n            marginLeft: 200 });\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nmd`**Select a region:**`\n\n\n\n\n\n\n\nviewof region = Inputs.select(regions.map(x => x.type), {label: \"Region\"});"
+  },
+  {
+    "objectID": "index.html#household-structure",
+    "href": "index.html#household-structure",
+    "title": "Financial Distress",
+    "section": "2.2 Household structure",
+    "text": "2.2 Household structure\nDifferent households have significant differences in the risk of financial distress. Generally couples have lower risk than singles which reflects the financial support provided by partners. Dependents increase the probability of financial distress, but only by a small amount.\n\nfamilies = [{\"type\":\"Non-elderly couple\",\"value\":0},\n            {\"type\":\"Couple with dependent children\",\"value\":1.69},\n            {\"type\":\"Single parent\",\"value\":7.53},\n            {\"type\":\"Single non-elderly male\",\"value\":8.81},\n            {\"type\":\"Single non-elderly female\",\"value\":7.12},\n            {\"type\":\"Older couple\",\"value\":-3.76},\n            {\"type\":\"Single older male\",\"value\":7.18},\n            {\"type\":\"Single older female\",\"value\":0}] \nBarChart(families, { y: d => d.type,\n                     x: d => d.value, \n                color: '#028577', \n                   marginLeft: 200 });\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nmd`**Select a household structure type:**`\n\n\n\n\n\n\n\nviewof family = Inputs.select(\n    families.map(x => x.type), \n    { label: \"Family Structure\" });"
+  },
+  {
+    "objectID": "index.html#change-in-partnership",
+    "href": "index.html#change-in-partnership",
+    "title": "Financial Distress",
+    "section": "2.3 Change in Partnership",
+    "text": "2.3 Change in Partnership\nAs expected hardship increases when partners separate, hardship does not decrease materially when individuals become partnered.\n\npartners = [{\"type\":\"No change\",\"value\":0},\n            {\"type\":\"Partnered\",\"value\":0},\n            {\"type\":\"Separated\",\"value\":4.27}] \nBarChart(partners, { y: d => d.type,\n                     x: d => d.value, \n                color: '#028577', \n                   marginLeft: 200 });\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nmd`**Select a household structure type:**`\n\n\n\n\n\n\n\nviewof partner = Inputs.select(partners.map(x => x.type), \n    {label: \"Change in Partnership\"});"
+  },
+  {
+    "objectID": "index.html#disability",
+    "href": "index.html#disability",
+    "title": "Financial Distress",
+    "section": "2.4 Disability",
+    "text": "2.4 Disability\nMental health issues have the biggest negative effect on financial hardship.\n\ndisabilities = [{\"type\":\"No disability\",\"value\":0},\n              {\"type\":\"Severe disability aged >15\",\"value\":2.37},\n              {\"type\":\"Disability of child <15\",\"value\":0},\n              {\"type\":\"Poor general health aged >15\",\"value\":0},\n              {\"type\":\"Poor mental health aged >15\",\"value\":3.69}] \nBarChart(disabilities, { y: d => d.type,\n                     x: d => d.value, \n                  color: '#028577', \n                   marginLeft: 200 });\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nmd`**Select a disability type:**`\n\n\n\n\n\n\n\nviewof disability = Inputs.select(disabilities.map(x => x.type), \n    {label: \"Disability in Household\"});"
+  },
+  {
+    "objectID": "index.html#housing-tenure",
+    "href": "index.html#housing-tenure",
+    "title": "Financial Distress",
+    "section": "2.5 Housing Tenure",
+    "text": "2.5 Housing Tenure\nOwning a home outright is associated with the lowest probability of financial hardship, in contrast private renters have the highest rates of hardship.\n\ntenures = [{\"type\":\"Own outright\",\"value\":0},\n          {\"type\":\"Own with mortgage\",\"value\":4.72},\n          {\"type\":\"Renter of social housing\",\"value\":5.87},\n          {\"type\":\"Renter of private housing\",\"value\":9.8}]\nBarChart(tenures, { y: d => d.type,\n                     x: d => d.value, \n                  color: '#028577', \n                   marginLeft: 200 });\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nmd`**Select a housing tenure:**`\n\n\n\n\n\n\n\nviewof tenure = Inputs.select(tenures.map(x => x.type), {label: \"House Tenure\"});"
+  },
+  {
+    "objectID": "index.html#life-events",
+    "href": "index.html#life-events",
+    "title": "Financial Distress",
+    "section": "2.6 Life Events",
+    "text": "2.6 Life Events\nLoss of employment has the most significant effect on financial stress, however victims of violence and illness are also significant factors.\n\nevents = [{\"type\":\"No life events\",\"value\":0},\n               {\"type\":\"Birth or adoption of a child\",\"value\":2.68},\n               {\"type\":\"Serious injury or illness\",\"value\":1.67},\n               {\"type\":\"Death of spouse of child\",\"value\":0},\n               {\"type\":\"Detained in jail/correctional facility\",\"value\":0},\n               {\"type\":\"Victim of physical violence\",\"value\":3.17},\n               {\"type\":\"Victim of a property crime\",\"value\":1.39},\n               {\"type\":\"Changed residence\",\"value\":2.95},\n               {\"type\":\"Changed jobs\",\"value\":2.61},\n               {\"type\":\"Fired or made redundant\",\"value\":4.33},\n               {\"type\":\"Retired\",\"value\":0},\n               {\"type\":\"A weather related disaster\",\"value\":2.97}]\nBarChart(events, { y: d => d.type,\n                     x: d => d.value, \n                  color: '#028577', \n                   marginLeft: 200 });\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nmd`**Select a life event:**`\n\n\n\n\n\n\n\nviewof event = Inputs.select(events.map(x => x.type), {label: \"Life Events\"});"
+  },
+  {
+    "objectID": "index.html#financial-stress-over-time",
+    "href": "index.html#financial-stress-over-time",
+    "title": "Financial Distress",
+    "section": "2.7 Financial Stress over Time",
+    "text": "2.7 Financial Stress over Time\nFinancial stress was highest in the period from 2002-04, declined significantly over the period of the GFC before rising modestly as interest rates increased in 2010.\n\nyears = [{\"type\":\"2002-2004\",\"value\":0},\n        {\"type\":\"2005-2009\",\"value\":-9.28},\n         {\"type\":\"2010-2014\",\"value\":-8.24},\n        {\"type\":\"2015-2019\",\"value\":-13.49}] \nBarChart(years, { y: d => d.type,\n                     x: d => d.value, \n                  color: '#028577', \n                   marginLeft: 200 });"
+  },
+  {
+    "objectID": "index.html#household-income",
+    "href": "index.html#household-income",
+    "title": "Financial Distress",
+    "section": "2.8 Household income",
+    "text": "2.8 Household income\nEquivalised household income is the most significant determinant of the likelihood of financial distress. It increases steeply as household income is less than median income of $70,000. The effect is illustrated in the calculator, which illustrates the variation across income for the select household risk features."
+  }
+]
