@@ -87,7 +87,7 @@ Inputs.table(persistence, { format: {
 ```
 
 
-# Financial distress calculator
+# Financial Distress Calculator
 
 ## Regions
 
