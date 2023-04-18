@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+
+body, p { 
+    font-size: 15px; 
+    color: #343944; 
+    font-family: Roboto;
+}
+
+td, th { 
+    font-size: 11px; }
+
+h1, h2  { 
+    color: #028577; } 
+
+.oi-ec050e-input>input[type=range] { 
+    color: #028577; }
+

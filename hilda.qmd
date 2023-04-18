@@ -1,0 +1,294 @@
+---
+title: Financial Distress
+format: 
+    html:
+        toc: true
+        css: www/kadre.css
+        number-sections: true
+        embed-resources: true
+execute: 
+    echo: false
+---
+
+```{ojs}
+import {BarChart} from "@d3/horizontal-bar-chart"
+import {LineChart} from "@d3/multi-line-chart"
+```
+
+
+# Introduction
+
+The following calculator using a model developed for the Household Income and Labour Dynamics in Australian (HILDA) [Survey](https://melbourneinstitute.unimelb.edu.au/hilda) to derive the probability of financial distress for Australian households for the period 2002 to 2022. 
+
+The HILDA survey is an annual longitudinal survey that includes a deep investigation of 40000 households structure, financial circumstances, well being, work and life situations. As a longitudinal survey HILDA captures both the households current position but also the impact of life events on wellbeing including birth, schooling, employment, marriage, promotion, disablement, retirement and death. 
+
+In HILDA a *wave* is a cohort of households which are monitored over a number of years, before being replaced by a new cohort. Cohorts are overlapping, with approximately X% being replaced each year. 
+
+
+[Source](https://melbourneinstitute.unimelb.edu.au/__data/assets/pdf_file/0009/3963249/HILDA-Statistical-Report-2021.pdf)
+
+## Indicators of Financial Stress
+
+Financial Stress is defined as the difficulty that an individual or household may have in meeting basic financial commitments due to a shortage of money. 
+
+HILDA uses the same definition as the ABS Household Expenditure Survey, which includes survey questions where the household indicates at least two of the following are true: 
+
+ - Could not pay electricity, gas or telephone bills on time
+ - Could not pay rent or mortgage on time
+ - Asked for financial help from friends or family
+ - Unable to heat home
+ - Went without meals
+ - Pawned or sold something
+ - Asked for help from welfare/community organisations. 
+
+
+```{ojs}
+hardship = [{type: 'Inability to pay utility bills', value: 0.125},
+            {type: 'Asked for financial help from family', value: 0.121},
+            {type: 'Inability to pay mortgage, rent', value: 0.061},
+            {type:  'Pawned, sold something', value: 0.037},
+            {type:  'Asked for help from welfare organisation', value: 0.035},
+            {type:  'Went without meals', value: 0.031},
+            {type:  'Unable to heat home', value: 0.021}];
+BarChart(hardship, { y: d => d.type,
+                     x: d => d.value, 
+                 color: '#028577', 
+                   marginLeft: 200 });            
+```
+
+## Persistence of Financial Stress 
+
+The HILDA survey has been undertaken annually since 2002. Fairly consistent over the course of the survey, financial distress has been included and evidence of persistence from year to year is strong. 
+
+
+```{ojs}
+persistence = [{"HouseholdType":"Non-elderly couple","InStress":7.5,"2001-2004":48.6,"2005-2008":47.1,"2011-2014":45.9,"2015-2018":51.2},{"HouseholdType":"Couple with dependent children","InStress":11,"2001-2004":55.6,"2005-2008":57.9,"2011-2014":57,"2015-2018":56.2},{"HouseholdType":"Single parent","InStress":28.5,"2001-2004":62.9,"2005-2008":66.4,"2011-2014":64.2,"2015-2018":61.7},{"HouseholdType":"Single non-elderly male","InStress":16.3,"2001-2004":55.7,"2005-2008":54.7,"2011-2014":53.6,"2015-2018":52.6},{"HouseholdType":"Single non-elderly female","InStress":16.9,"2001-2004":58,"2005-2008":54.9,"2011-2014":55,"2015-2018":5.1},{"HouseholdType":"Elderly couple","InStress":2.7,"2001-2004":17.3,"2005-2008":27.5,"2011-2014":26.8,"2015-2018":28.3},{"HouseholdType":"Single elderly male","InStress":5.4,"2001-2004":13.9,"2005-2008":25.2,"2011-2014":33.6,"2015-2018":44.7},{"HouseholdType":"Single elderly female","InStress":6.5,"2001-2004":34.1,"2005-2008":42.5,"2011-2014":47.5,"2015-2018":46.9},{"HouseholdType":"All persons","InStress":11.9,"2001-2004":54.4,"2005-2008":55.3,"2011-2014":54.2,"2015-2018":54.4}] 
+
+```
+
+```{ojs}
+function sparkbar(max) {
+  return x => htl.html`<div style="
+    background: #fdc536;
+    width: ${100 * x / max}%;
+    float: right;
+    padding-right: 3px;
+    box-sizing: border-box;
+    overflow: visible;
+    display: flex;
+    justify-content: end;">${x.toLocaleString("en")}`
+}
+
+Inputs.table(persistence, { format: { 
+  "InStress": 
+       sparkbar(d3.max(persistence, d => d['InStress'])),
+    "2001-2004": x => d3.format(".1%")(x/100), 
+   "2005-2008": x => d3.format(".1%")(x/100), 
+   "2011-2014": x => d3.format(".1%")(x/100), 
+   "2015-2018": x => d3.format(".1%")(x/100) }, 
+ header: { HouseholdType: "Household Type", 
+           InStress: "Proportion in Distress" }, 
+ layout: "auto"  })
+```
+
+
+# Financial distress calculator
+
+## Regions
+
+Given the significantly higher housing costs in the major capital cities, financial distress is generally higher in the major urban areas and is lower in regional cities and other areas of Australia. 
+
+```{ojs}
+regions = [{type: "Major urban", value: 0}, 
+            {type: "Other urban", value: -3.21}, 
+            {type: "Other region", value: -1.73}]
+BarChart(regions, { y: d => d.type,
+                     x: d => d.value, 
+                 color: '#028577',  
+            marginLeft: 200 });   
+```
+
+```{ojs}
+//| panel: input
+md`**Select a region:**`
+viewof region = Inputs.select(regions.map(x => x.type), {label: "Region"});
+```
+
+## Household structure 
+
+Different households have significant differences in the risk of financial distress. Generally couples have lower risk than singles which reflects the financial support provided by partners. Dependents increase the probability of financial distress, but only by a small amount. 
+
+```{ojs}
+families = [{"type":"Non-elderly couple","value":0},
+            {"type":"Couple with dependent children","value":1.69},
+            {"type":"Single parent","value":7.53},
+            {"type":"Single non-elderly male","value":8.81},
+            {"type":"Single non-elderly female","value":7.12},
+            {"type":"Older couple","value":-3.76},
+            {"type":"Single older male","value":7.18},
+            {"type":"Single older female","value":0}] 
+BarChart(families, { y: d => d.type,
+                     x: d => d.value, 
+                color: '#028577', 
+                   marginLeft: 200 });  
+```
+
+```{ojs}
+//| panel: input
+md`**Select a household structure type:**`
+viewof family = Inputs.select(
+    families.map(x => x.type), 
+    { label: "Family Structure" });
+```
+
+## Change in Partnership
+
+As expected hardship increases when partners separate, hardship does not decrease materially when individuals become partnered. 
+
+```{ojs}
+partners = [{"type":"No change","value":0},
+            {"type":"Partnered","value":0},
+            {"type":"Separated","value":4.27}] 
+BarChart(partners, { y: d => d.type,
+                     x: d => d.value, 
+                color: '#028577', 
+                   marginLeft: 200 }); 
+```
+
+```{ojs}
+//| panel: input
+md`**Select a household structure type:**`
+viewof partner = Inputs.select(partners.map(x => x.type), 
+    {label: "Change in Partnership"});
+```
+
+## Disability
+
+Mental health issues have the biggest negative effect on financial hardship. 
+
+```{ojs}
+disabilities = [{"type":"No disability","value":0},
+              {"type":"Severe disability aged >15","value":2.37},
+              {"type":"Disability of child <15","value":0},
+              {"type":"Poor general health aged >15","value":0},
+              {"type":"Poor mental health aged >15","value":3.69}] 
+BarChart(disabilities, { y: d => d.type,
+                     x: d => d.value, 
+                  color: '#028577', 
+                   marginLeft: 200 }); 
+```
+
+
+```{ojs}
+//| panel: input
+md`**Select a disability type:**`
+viewof disability = Inputs.select(disabilities.map(x => x.type), 
+    {label: "Disability in Household"});
+```
+
+## Housing Tenure
+
+Owning a home outright is associated with the lowest probability of financial hardship, in contrast private renters have the highest rates of hardship. 
+
+```{ojs}
+tenures = [{"type":"Own outright","value":0},
+          {"type":"Own with mortgage","value":4.72},
+          {"type":"Renter of social housing","value":5.87},
+          {"type":"Renter of private housing","value":9.8}]
+BarChart(tenures, { y: d => d.type,
+                     x: d => d.value, 
+                  color: '#028577', 
+                   marginLeft: 200 }); 
+```
+
+```{ojs}
+//| panel: input
+md`**Select a housing tenure:**`
+viewof tenure = Inputs.select(tenures.map(x => x.type), {label: "House Tenure"});
+```
+
+## Life Events
+
+Loss of employment has the most significant effect on financial stress, however victims of violence and illness are also significant factors.  
+
+```{ojs}
+events = [{"type":"No life events","value":0},
+               {"type":"Birth or adoption of a child","value":2.68},
+               {"type":"Serious injury or illness","value":1.67},
+               {"type":"Death of spouse of child","value":0},
+               {"type":"Detained in jail/correctional facility","value":0},
+               {"type":"Victim of physical violence","value":3.17},
+               {"type":"Victim of a property crime","value":1.39},
+               {"type":"Changed residence","value":2.95},
+               {"type":"Changed jobs","value":2.61},
+               {"type":"Fired or made redundant","value":4.33},
+               {"type":"Retired","value":0},
+               {"type":"A weather related disaster","value":2.97}]
+BarChart(events, { y: d => d.type,
+                     x: d => d.value, 
+                  color: '#028577', 
+                   marginLeft: 200 });                
+```
+ 
+
+```{ojs}
+//| panel: input
+md`**Select a life event:**`
+viewof event = Inputs.select(events.map(x => x.type), {label: "Life Events"});
+```
+
+## Financial Stress over Time
+
+Financial stress was highest in the period from 2002-04, declined significantly over the period of the GFC 
+before rising modestly as interest rates increased in 2010. 
+
+```{ojs}
+years = [{"type":"2002-2004","value":0},
+        {"type":"2005-2009","value":-9.28},
+         {"type":"2010-2014","value":-8.24},
+        {"type":"2015-2019","value":-13.49}] 
+BarChart(years, { y: d => d.type,
+                     x: d => d.value, 
+                  color: '#028577', 
+                   marginLeft: 200 }); 
+```
+
+
+## Household income
+
+Equivalised household income is the most significant determinant of the likelihood of financial distress. It increases steeply as household income is less than median income of \$70,000. The effect is illustrated in the calculator, which illustrates the variation across income 
+for the select household risk features. 
+
+# Combined Risk Across Income Ranges
+
+From the selected options above, the impact of income on financial distress is illustrated in the chart below.  
+
+```{ojs}
+function calc_score_allyears(i) { 
+  var scoreweight = [i*-0.0353,
+                     regions.filter(x => { return x.type===region })[0].value/100, 
+                     families.filter(x => { return x.type===family })[0].value/100 , 
+                     partners.filter(x => { return x.type===partner })[0].value/100, 
+                     disabilities.filter(x => { return x.type===disability })[0].value/100, 
+                     tenures.filter(x => { return x.type===tenure })[0].value/100 , 
+                     events.filter(x => { return x.type===event })[0].value/100] 
+  return years.map(x => 
+                   ({ income: i, 
+                       year: x.type, 
+                   distress: 1/(1+Math.exp(-d3.sum(scoreweight) - x.value/100)) 
+                    })); 
+}
+```
+
+```{ojs}
+LineChart(d3.range(10, 200).map(i => calc_score_allyears(i)).flat(), {
+  x: d => d.income*1000, 
+  y: d => d.distress, 
+  z: d => d.year, 
+  xType: d3.scaleLinear, 
+  color: '#E65E47', 
+  yFormat: ".1%", 
+  yLabel: "Probability of Financial Distress"
+})
+```
+
