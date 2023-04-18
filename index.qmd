@@ -5,6 +5,7 @@ subtitle: The impact of life events and household structures on financial hardsh
 date: today 
 date-format: DD MMMM YYYY
 author: Christian Klettner
+bibliography: references.bib
 execute: 
     echo: false
 ---
@@ -14,7 +15,6 @@ import {BarChart} from "@d3/horizontal-bar-chart"
 import {LineChart} from "@d3/multi-line-chart"
 ```
 
-
 # Introduction
 
 The following calculator using a model developed for the Household Income and Labour Dynamics in Australian (HILDA) [Survey](https://melbourneinstitute.unimelb.edu.au/hilda) to derive the probability of financial distress for Australian households for the period 2002 to 2022. 
@@ -23,8 +23,7 @@ The HILDA survey is an annual longitudinal survey that includes a deep investiga
 
 In HILDA a *wave* is a cohort of households which are monitored over a number of years, before being replaced by a new cohort. Cohorts are overlapping, with approximately X% being replaced each year. 
 
-
-[Source](https://melbourneinstitute.unimelb.edu.au/__data/assets/pdf_file/0009/3963249/HILDA-Statistical-Report-2021.pdf)
+The following analysis is drawn from the latest annual statistical report on the survey [@hilda2021]. 
 
 ## Indicators of Financial Stress
 
@@ -45,14 +44,15 @@ HILDA uses the same definition as the ABS Household Expenditure Survey, which in
 hardship = [{type: 'Inability to pay utility bills', value: 0.125},
             {type: 'Asked for financial help from family', value: 0.121},
             {type: 'Inability to pay mortgage, rent', value: 0.061},
-            {type:  'Pawned, sold something', value: 0.037},
-            {type:  'Asked for help from welfare organisation', value: 0.035},
-            {type:  'Went without meals', value: 0.031},
-            {type:  'Unable to heat home', value: 0.021}];
-BarChart(hardship, { y: d => d.type,
-                     x: d => d.value, 
-                 color: '#028577', 
-                   marginLeft: 200 });            
+            {type: 'Pawned, sold something', value: 0.037},
+            {type: 'Asked for help from welfare organisation', value: 0.035},
+            {type: 'Went without meals', value: 0.031},
+            {type: 'Unable to heat home', value: 0.021}];
+BarChart(hardship, { 
+  y: d => d.type,
+  x: d => d.value, 
+  color: '#028577', 
+  marginLeft: 200 });            
 ```
 
 ## Persistence of Financial Stress 
@@ -61,8 +61,16 @@ The HILDA survey has been undertaken annually since 2002. Fairly consistent over
 
 
 ```{ojs}
-persistence = [{"HouseholdType":"Non-elderly couple","InStress":7.5,"2001-2004":48.6,"2005-2008":47.1,"2011-2014":45.9,"2015-2018":51.2},{"HouseholdType":"Couple with dependent children","InStress":11,"2001-2004":55.6,"2005-2008":57.9,"2011-2014":57,"2015-2018":56.2},{"HouseholdType":"Single parent","InStress":28.5,"2001-2004":62.9,"2005-2008":66.4,"2011-2014":64.2,"2015-2018":61.7},{"HouseholdType":"Single non-elderly male","InStress":16.3,"2001-2004":55.7,"2005-2008":54.7,"2011-2014":53.6,"2015-2018":52.6},{"HouseholdType":"Single non-elderly female","InStress":16.9,"2001-2004":58,"2005-2008":54.9,"2011-2014":55,"2015-2018":5.1},{"HouseholdType":"Elderly couple","InStress":2.7,"2001-2004":17.3,"2005-2008":27.5,"2011-2014":26.8,"2015-2018":28.3},{"HouseholdType":"Single elderly male","InStress":5.4,"2001-2004":13.9,"2005-2008":25.2,"2011-2014":33.6,"2015-2018":44.7},{"HouseholdType":"Single elderly female","InStress":6.5,"2001-2004":34.1,"2005-2008":42.5,"2011-2014":47.5,"2015-2018":46.9},{"HouseholdType":"All persons","InStress":11.9,"2001-2004":54.4,"2005-2008":55.3,"2011-2014":54.2,"2015-2018":54.4}] 
-
+persistence = [
+  {"HouseholdType":"Non-elderly couple","InStress":7.5,"2001-2004":48.6,"2005-2008":47.1,"2011-2014":45.9,"2015-2018":51.2},
+  {"HouseholdType":"Couple with dependent children","InStress":11,"2001-2004":55.6,"2005-2008":57.9,"2011-2014":57,"2015-2018":56.2},
+  {"HouseholdType":"Single parent","InStress":28.5,"2001-2004":62.9,"2005-2008":66.4,"2011-2014":64.2,"2015-2018":61.7},
+  {"HouseholdType":"Single non-elderly male","InStress":16.3,"2001-2004":55.7,"2005-2008":54.7,"2011-2014":53.6,"2015-2018":52.6},  
+  {"HouseholdType":"Single non-elderly female","InStress":16.9,"2001-2004":58,"2005-2008":54.9,"2011-2014":55,"2015-2018":5.1},
+  {"HouseholdType":"Elderly couple","InStress":2.7,"2001-2004":17.3,"2005-2008":27.5,"2011-2014":26.8,"2015-2018":28.3},
+  {"HouseholdType":"Single elderly male","InStress":5.4,"2001-2004":13.9,"2005-2008":25.2,"2011-2014":33.6,"2015-2018":44.7},
+  {"HouseholdType":"Single elderly female","InStress":6.5,"2001-2004":34.1,"2005-2008":42.5,"2011-2014":47.5,"2015-2018":46.9},
+  {"HouseholdType":"All persons","InStress":11.9,"2001-2004":54.4,"2005-2008":55.3,"2011-2014":54.2,"2015-2018":54.4}] 
 ```
 
 ```{ojs}
@@ -82,9 +90,9 @@ Inputs.table(persistence, { format: {
   "InStress": 
        sparkbar(d3.max(persistence, d => d['InStress'])),
     "2001-2004": x => d3.format(".1%")(x/100), 
-   "2005-2008": x => d3.format(".1%")(x/100), 
-   "2011-2014": x => d3.format(".1%")(x/100), 
-   "2015-2018": x => d3.format(".1%")(x/100) }, 
+    "2005-2008": x => d3.format(".1%")(x/100), 
+    "2011-2014": x => d3.format(".1%")(x/100), 
+    "2015-2018": x => d3.format(".1%")(x/100) }, 
  header: { HouseholdType: "Household Type", 
            InStress: "Proportion in Distress" }, 
  layout: "auto"  })
@@ -101,10 +109,11 @@ Given the significantly higher housing costs in the major capital cities, financ
 regions = [{type: "Major urban", value: 0}, 
             {type: "Other urban", value: -3.21}, 
             {type: "Other region", value: -1.73}]
-BarChart(regions, { y: d => d.type,
-                     x: d => d.value, 
-                 color: '#028577',  
-            marginLeft: 200 });   
+BarChart(regions, { 
+  y: d => d.type,
+  x: d => d.value, 
+  color: '#028577',  
+  marginLeft: 200 });   
 ```
 
 ```{ojs}
@@ -126,10 +135,11 @@ families = [{"type":"Non-elderly couple","value":0},
             {"type":"Older couple","value":-3.76},
             {"type":"Single older male","value":7.18},
             {"type":"Single older female","value":0}] 
-BarChart(families, { y: d => d.type,
-                     x: d => d.value, 
-                color: '#028577', 
-                   marginLeft: 200 });  
+BarChart(families, { 
+  y: d => d.type,
+  x: d => d.value, 
+  color: '#028577', 
+  marginLeft: 200 });  
 ```
 
 ```{ojs}
@@ -148,10 +158,11 @@ As expected hardship increases when partners separate, hardship does not decreas
 partners = [{"type":"No change","value":0},
             {"type":"Partnered","value":0},
             {"type":"Separated","value":4.27}] 
-BarChart(partners, { y: d => d.type,
-                     x: d => d.value, 
-                color: '#028577', 
-                   marginLeft: 200 }); 
+BarChart(partners, { 
+  y: d => d.type,
+  x: d => d.value, 
+  color: '#028577', 
+  marginLeft: 200 }); 
 ```
 
 ```{ojs}
@@ -167,14 +178,15 @@ Mental health issues have the biggest negative effect on financial hardship.
 
 ```{ojs}
 disabilities = [{"type":"No disability","value":0},
-              {"type":"Severe disability aged >15","value":2.37},
-              {"type":"Disability of child <15","value":0},
-              {"type":"Poor general health aged >15","value":0},
-              {"type":"Poor mental health aged >15","value":3.69}] 
-BarChart(disabilities, { y: d => d.type,
-                     x: d => d.value, 
-                  color: '#028577', 
-                   marginLeft: 200 }); 
+               {"type":"Severe disability aged >15","value":2.37},
+               {"type":"Disability of child <15","value":0},
+               {"type":"Poor general health aged >15","value":0},
+               {"type":"Poor mental health aged >15","value":3.69}] 
+BarChart(disabilities, { 
+  y: d => d.type,
+  x: d => d.value, 
+  color: '#028577', 
+  marginLeft: 200 }); 
 ```
 
 
@@ -191,13 +203,14 @@ Owning a home outright is associated with the lowest probability of financial ha
 
 ```{ojs}
 tenures = [{"type":"Own outright","value":0},
-          {"type":"Own with mortgage","value":4.72},
-          {"type":"Renter of social housing","value":5.87},
-          {"type":"Renter of private housing","value":9.8}]
-BarChart(tenures, { y: d => d.type,
-                     x: d => d.value, 
-                  color: '#028577', 
-                   marginLeft: 200 }); 
+           {"type":"Own with mortgage","value":4.72},
+           {"type":"Renter of social housing","value":5.87},
+           {"type":"Renter of private housing","value":9.8}]
+BarChart(tenures, { 
+  y: d => d.type,
+  x: d => d.value, 
+  color: '#028577', 
+  marginLeft: 200 }); 
 ```
 
 ```{ojs}
@@ -212,21 +225,22 @@ Loss of employment has the most significant effect on financial stress, however 
 
 ```{ojs}
 events = [{"type":"No life events","value":0},
-               {"type":"Birth or adoption of a child","value":2.68},
-               {"type":"Serious injury or illness","value":1.67},
-               {"type":"Death of spouse of child","value":0},
-               {"type":"Detained in jail/correctional facility","value":0},
-               {"type":"Victim of physical violence","value":3.17},
-               {"type":"Victim of a property crime","value":1.39},
-               {"type":"Changed residence","value":2.95},
-               {"type":"Changed jobs","value":2.61},
-               {"type":"Fired or made redundant","value":4.33},
-               {"type":"Retired","value":0},
-               {"type":"A weather related disaster","value":2.97}]
-BarChart(events, { y: d => d.type,
-                     x: d => d.value, 
-                  color: '#028577', 
-                   marginLeft: 200 });                
+          {"type":"Birth or adoption of a child","value":2.68},
+          {"type":"Serious injury or illness","value":1.67},
+          {"type":"Death of spouse of child","value":0},
+          {"type":"Detained in jail/correctional facility","value":0},
+          {"type":"Victim of physical violence","value":3.17},
+          {"type":"Victim of a property crime","value":1.39},
+          {"type":"Changed residence","value":2.95},
+          {"type":"Changed jobs","value":2.61},
+          {"type":"Fired or made redundant","value":4.33},
+          {"type":"Retired","value":0},
+          {"type":"A weather related disaster","value":2.97}]
+BarChart(events, { 
+  y: d => d.type,
+  x: d => d.value, 
+  color: '#028577', 
+  marginLeft: 200 });                
 ```
  
 
@@ -243,13 +257,14 @@ before rising modestly as interest rates increased in 2010.
 
 ```{ojs}
 years = [{"type":"2002-2004","value":0},
-        {"type":"2005-2009","value":-9.28},
+         {"type":"2005-2009","value":-9.28},
          {"type":"2010-2014","value":-8.24},
-        {"type":"2015-2019","value":-13.49}] 
-BarChart(years, { y: d => d.type,
-                     x: d => d.value, 
-                  color: '#028577', 
-                   marginLeft: 200 }); 
+         {"type":"2015-2019","value":-13.49}] 
+BarChart(years, { 
+  y: d => d.type,
+  x: d => d.value, 
+  color: '#028577', 
+  marginLeft: 200 }); 
 ```
 
 
@@ -290,4 +305,6 @@ LineChart(d3.range(10, 200).map(i => calc_score_allyears(i)).flat(), {
   yLabel: "Probability of Financial Distress"
 })
 ```
+
+
 

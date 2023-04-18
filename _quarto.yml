@@ -8,3 +8,4 @@ format:
     html:
         css: www/kadre.css
         embed-resources: true
+        include-after-body: www/footer.html
