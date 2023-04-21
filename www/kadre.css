@@ -16,7 +16,6 @@ p.subtitle {
     color: white;
 }
 
-
 h1, h2  { 
     color: #028577; } 
 
@@ -24,4 +23,12 @@ h1, h2  {
     color: #028577; }
 
 .footer { 
+    color: #028577;
     padding: 10px; }
+    
+.flex-container {
+  display: flex;
+  padding: 10px; 
+  align-items: center;
+  justify-content: center;
+}

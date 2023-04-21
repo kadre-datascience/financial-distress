@@ -11,8 +11,8 @@ execute:
 ---
 
 ```{ojs}
-import {BarChart} from "@d3/horizontal-bar-chart"
-import {LineChart} from "@d3/multi-line-chart"
+import {Plot} from "@mkfreeman/plot-tooltip";
+//import {BarChartNeg} from "./barchartneg.js"
 ```
 
 # Introduction
@@ -48,11 +48,14 @@ hardship = [{type: 'Inability to pay utility bills', value: 0.125},
             {type: 'Asked for help from welfare organisation', value: 0.035},
             {type: 'Went without meals', value: 0.031},
             {type: 'Unable to heat home', value: 0.021}];
-BarChart(hardship, { 
-  y: d => d.type,
-  x: d => d.value, 
-  color: '#028577', 
-  marginLeft: 200 });            
+Plot.plot({ 
+    marginLeft: 200,
+    marks: [Plot.barX(hardship, { y: "type", x: "value", fill: "value"}), 
+            Plot.ruleX([0]), 
+            Plot.axisX({anchor: "top", label: "Financial Hardship (%)"})
+            ], 
+    color: {type: "threshold", domain: [0], range: ["#FDC536", "#E65847"] } 
+})
 ```
 
 ## Persistence of Financial Stress 
@@ -109,11 +112,16 @@ Given the significantly higher housing costs in the major capital cities, financ
 regions = [{type: "Major urban", value: 0}, 
             {type: "Other urban", value: -3.21}, 
             {type: "Other region", value: -1.73}]
-BarChart(regions, { 
-  y: d => d.type,
-  x: d => d.value, 
-  color: '#028577',  
-  marginLeft: 200 });   
+Plot.plot({ 
+    marginLeft: 200,
+    marks: [Plot.barX(regions, { y: "type", x: "value", fill: "value"}), 
+            Plot.axisX({anchor: "top", label: "Change in Financial Hardship (%)"}), 
+            Plot.axisY({label: null }), 
+            Plot.text(regions.filter(d => Math.abs(d.value)>1), 
+                { y: "type", x: d => d.value < 0 ? d.value+0.2 : d.value-0.2, text: "value" }),
+            Plot.ruleX([0])], 
+    color: {type: "threshold", domain: [0], range: ["#FDC536", "#E65847"] } 
+})
 ```
 
 ```{ojs}
@@ -135,11 +143,16 @@ families = [{"type":"Non-elderly couple","value":0},
             {"type":"Older couple","value":-3.76},
             {"type":"Single older male","value":7.18},
             {"type":"Single older female","value":0}] 
-BarChart(families, { 
-  y: d => d.type,
-  x: d => d.value, 
-  color: '#028577', 
-  marginLeft: 200 });  
+Plot.plot({ 
+    marginLeft: 200,
+    marks: [Plot.barX(families, { y: "type", x: "value", fill: "value"}), 
+            Plot.axisX({anchor: "top", label: "Change in Financial Hardship (%)"}), 
+            Plot.axisY({label: null }), 
+            Plot.text(families.filter(d => Math.abs(d.value)>1), 
+                { y: "type", x: d => d.value < 0 ? d.value+0.5 : d.value-0.5, text: "value" }),
+            Plot.ruleX([0])], 
+    color: {type: "threshold", domain: [0], range: ["#FDC536", "#E65847"] } 
+})
 ```
 
 ```{ojs}
@@ -158,11 +171,16 @@ As expected hardship increases when partners separate, hardship does not decreas
 partners = [{"type":"No change","value":0},
             {"type":"Partnered","value":0},
             {"type":"Separated","value":4.27}] 
-BarChart(partners, { 
-  y: d => d.type,
-  x: d => d.value, 
-  color: '#028577', 
-  marginLeft: 200 }); 
+Plot.plot({ 
+    marginLeft: 200,
+    marks: [Plot.barX(partners, { y: "type", x: "value", fill: "value"}), 
+            Plot.axisX({anchor: "top", label: "Change in Financial Hardship (%)"}), 
+            Plot.axisY({label: null }), 
+            Plot.text(partners.filter(d => Math.abs(d.value)>1), 
+                { y: "type", x: d => d.value < 0 ? d.value+0.2 : d.value-0.2, text: "value" }),
+            Plot.ruleX([0])], 
+    color: {type: "threshold", domain: [0], range: ["#FDC536", "#E65847"] } 
+})
 ```
 
 ```{ojs}
@@ -182,11 +200,16 @@ disabilities = [{"type":"No disability","value":0},
                {"type":"Disability of child <15","value":0},
                {"type":"Poor general health aged >15","value":0},
                {"type":"Poor mental health aged >15","value":3.69}] 
-BarChart(disabilities, { 
-  y: d => d.type,
-  x: d => d.value, 
-  color: '#028577', 
-  marginLeft: 200 }); 
+Plot.plot({ 
+    marginLeft: 200,
+    marks: [Plot.barX(disabilities, { y: "type", x: "value", fill: "value"}), 
+            Plot.axisX({anchor: "top", label: "Change in Financial Hardship (%)"}), 
+            Plot.axisY({label: null }), 
+            Plot.text(disabilities.filter(d => Math.abs(d.value)>1), 
+                { y: "type", x: d => d.value < 0 ? d.value+0.2 : d.value-0.2, text: "value" }),
+            Plot.ruleX([0])], 
+    color: {type: "threshold", domain: [0], range: ["#FDC536", "#E65847"] } 
+})
 ```
 
 
@@ -206,11 +229,16 @@ tenures = [{"type":"Own outright","value":0},
            {"type":"Own with mortgage","value":4.72},
            {"type":"Renter of social housing","value":5.87},
            {"type":"Renter of private housing","value":9.8}]
-BarChart(tenures, { 
-  y: d => d.type,
-  x: d => d.value, 
-  color: '#028577', 
-  marginLeft: 200 }); 
+Plot.plot({ 
+    marginLeft: 200,
+    marks: [Plot.barX(tenures, { y: "type", x: "value", fill: "value"}), 
+            Plot.axisX({anchor: "top", label: "Change in Financial Hardship (%)"}), 
+            Plot.axisY({label: null }), 
+            Plot.text(tenures.filter(d => Math.abs(d.value)>1), 
+                { y: "type", x: d => d.value < 0 ? d.value+0.5 : d.value-0.5, text: "value" }),
+            Plot.ruleX([0])], 
+    color: {type: "threshold", domain: [0], range: ["#FDC536", "#E65847"] } 
+})
 ```
 
 ```{ojs}
@@ -236,11 +264,16 @@ events = [{"type":"No life events","value":0},
           {"type":"Fired or made redundant","value":4.33},
           {"type":"Retired","value":0},
           {"type":"A weather related disaster","value":2.97}]
-BarChart(events, { 
-  y: d => d.type,
-  x: d => d.value, 
-  color: '#028577', 
-  marginLeft: 200 });                
+Plot.plot({ 
+    marginLeft: 200,
+    marks: [Plot.barX(events, { y: "type", x: "value", fill: "value"}), 
+            Plot.axisX({anchor: "top", label: "Change in Financial Hardship (%)"}), 
+            Plot.axisY({label: null }), 
+            Plot.text(events.filter(d => Math.abs(d.value)>1), 
+                { y: "type", x: d => d.value < 0 ? d.value+0.2 : d.value-0.2, text: "value" }),
+            Plot.ruleX([0])], 
+    color: {type: "threshold", domain: [0], range: ["#FDC536", "#E65847"] } 
+})              
 ```
  
 
@@ -260,11 +293,17 @@ years = [{"type":"2002-2004","value":0},
          {"type":"2005-2009","value":-9.28},
          {"type":"2010-2014","value":-8.24},
          {"type":"2015-2019","value":-13.49}] 
-BarChart(years, { 
-  y: d => d.type,
-  x: d => d.value, 
-  color: '#028577', 
-  marginLeft: 200 }); 
+Plot.plot({ 
+    marginLeft: 200,
+    marks: [Plot.barX(years, { y: "type", x: "value", fill: "value"}), 
+            Plot.axisX({anchor: "top", label: "Change in Financial Hardship (%)"}), 
+            Plot.axisY({label: null }), 
+            Plot.text(years.filter(d => Math.abs(d.value)>1), 
+                { y: "type", x: d => d.value < 0 ? d.value+0.5 : d.value-0.5, text: "value" }),
+            Plot.ruleX([0])
+            ], 
+    color: {type: "threshold", domain: [0], range: ["#FDC536", "#E65847"] } 
+})   
 ```
 
 
@@ -295,15 +334,17 @@ function calc_score_allyears(i) {
 ```
 
 ```{ojs}
-LineChart(d3.range(10, 200).map(i => calc_score_allyears(i)).flat(), {
-  x: d => d.income*1000, 
-  y: d => d.distress, 
-  z: d => d.year, 
-  xType: d3.scaleLinear, 
-  color: '#E65E47', 
-  yFormat: ".1%", 
-  yLabel: "Probability of Financial Distress"
-})
+Plot.plot({ 
+    color: { legend: true },
+    y: {percent: true},
+    marks: [Plot.line(d3.range(10, 200).map(i => calc_score_allyears(i)).flat(), 
+                { y: "distress", x: "income", stroke: "year"}), 
+            Plot.axisX({anchor: "bottom", label: "Equivalised houshold annual income ($)"}), 
+            Plot.axisY({anchor: "left", label: "Probability of \n Financial Distress" }), 
+            Plot.ruleY([0])
+            ] 
+    })   
+
 ```
 
 
